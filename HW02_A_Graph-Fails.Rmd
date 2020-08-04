@@ -37,6 +37,16 @@ mpg %>%
   geom_point()
 
 ```
+Like the error message says, + should be used to add layers to a plot instead of >%>, since the output from the original ggplot2 call isn't being piped to geom_point(). 
+
+```{r}
+data(mpg) #this is a dataset from the ggplot2 package
+
+mpg %>% 
+  ggplot(mapping = aes(x = cty, y = hwy, color = "blue"))+ 
+  geom_point()
+
+```
 
 ### Graph Fail 2
 Why aren't the points blue? It is making me blue that the points in the graph aren't blue :`(
@@ -45,7 +55,13 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
 
 ```
+aes() is for values that are being plotted. Color is a geom_point() option outside of aes().
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color="blue")
+
+```
 
 
 ### Graph Fail 3
@@ -60,6 +76,27 @@ ggplot() +
   theme(legend.position = c(5, 40))
 
 ```
+alpha determines transparency of the points. Size can be modified with its own argument, size.
+
+```{r}
+mpg %>% 
+ggplot() + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class), shape=16, size=2) + 
+  theme(legend.direction = "horizontal") + 
+  theme(legend.position = c(5, 40))
+
+```
+Setting the legend position with a vector requires an ordered pair of values between 0 and 1 - not those that correspond to the axes on the plot.
+
+```{r}
+mpg %>% 
+ggplot() + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class), shape=16, size=2) + 
+  theme(legend.position=c(0.6,0.9))+
+  theme(legend.direction="horizontal")
+
+```
+
 
 ### Graph Fail 4
 I wanted just one smoothing line. Just one line, to show the general relationship here. But that's not happening. Instead I'm getting 3 lines, why and fix it please?
@@ -68,6 +105,15 @@ I wanted just one smoothing line. Just one line, to show the general relationshi
 mpg %>% 
 ggplot(mapping = aes(x = displ, y = hwy, color = drv)) + 
   geom_point() + 
+  geom_smooth(se = F) #se = F makes it so it won't show the error in the line of fit
+```
+
+geom_smooth() inherits aesthetics from ggplot call. Setting the color in geom_point causes geom_smooth to ignore the colors of the points.
+
+```{r}
+mpg %>% 
+ggplot(mapping = aes(x = displ, y = hwy)) + 
+  geom_point(aes(color=drv)) + 
   geom_smooth(se = F) #se = F makes it so it won't show the error in the line of fit
 ```
 
@@ -82,6 +128,13 @@ ggplot(data = mpg, mapping = aes(x = manufacturer, y = cty, color = manufacturer
   geom_boxplot() + 
   theme(axis.text.x = element_text(angle = 45))
 ```
+Make all one color by setting color and fill arguments to the same thing.
+Angle of x-axis labels are with respect to the center of the axis label. Changing the hjust argument adjusts the point around which the labels are justified.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = manufacturer, y = cty, color = manufacturer, fill=manufacturer)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45,hjust=1))
+```
 
 
