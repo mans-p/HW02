@@ -59,9 +59,10 @@ data("iris")
 
 Using the iris dataset, make this graph:
 ```{r graph 2 code, echo=FALSE}
-ggplot(iris,aes(Sepal.Length,Petal.Length,color=Species,shape=Species))+
-  geom_point()+
-  geom_smooth()
+ggplot(iris,aes(Sepal.Length,Petal.Length))+
+  geom_point(aes(color=Species,shape=Species))+
+  facet_wrap(facets=~factor(Species,levels=c("versicolor","setosa","virginica")),scales="free_y")+
+  geom_smooth(se=FALSE,method="lm",color="black")
   
 
 ```
